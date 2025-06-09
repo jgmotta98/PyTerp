@@ -1,73 +1,75 @@
 # PyTerp
 
-Um interpolador 3D para **Python** projetado para máxima velocidade em grandes conjuntos de dados. Acelera o algoritmo IDW com um núcleo C++ paralelizado (`OpenMP`) e buscas k-NN otimizadas (`nanoflann`).
+A 3D interpolator for **Python** designed for maximum speed on large datasets. It accelerates the IDW algorithm with a parallelized C++ core (`OpenMP`) and optimized k-NN searches (`nanoflann`).
 
-## Explicação Teórica
+## Theoretical Summary
 
-A interpolação é realizada em um processo de duas etapas que combina os algoritmos k-NN e IDW.
+The interpolation is performed in a two-step process that combines the k-NN and IDW algorithms.
 
-1. **Seleção de Vizinhos (k-NN)**: Para cada ponto onde se deseja estimar um valor, o algoritmo _k-Nearest Neighbors_ primeiro encontra os k pontos de origem conhecidos mais próximos no espaço. A eficiência desta busca é garantida por uma estrutura de dados otimizada (`k-d tree`).
+1. **Neighbor Selection (k-NN)**: For each point where a value is to be estimated, the _k-Nearest Neighbors_ algorithm first finds the k closest known source points in space. The efficiency of this search is ensured by an optimized data structure (`k-d tree`).
 
-2. **Cálculo do Valor (IDW)**: Em seguida, o método de _Ponderação pelo Inverso da Distância_ calcula o valor final como uma média ponderada dos k vizinhos encontrados. O peso de cada vizinho é inversamente proporcional à sua distância ($ \text{peso} = \frac{1}{\text{distância}^{p}} $, onde `p` é uma variável de potência), fazendo com que pontos mais próximos tenham uma influência muito maior no resultado.
+2. **Value Calculation (IDW)**: Next, the _Inverse Distance Weighting_ method calculates the final value as a weighted average of the k found neighbors. The weight of each neighbor is inversely proportional to its distance (weight = 1/distanceᵖ, where `p` is a power parameter), causing closer points to have a much greater influence on the result.
 
-## Uso
+## Prerequisites
 
-### Pré-requisitos
-
-Antes de começar, garanta que você tenha os seguintes softwares instalados:
+Before you begin, ensure you have the following software installed:
 
 * **Python 3.10+**
 * **Git**
-* **Um compilador C++**: Este pacote contém código C++ que precisa ser compilado durante a instalação.
-    * **Windows**: Instale as Ferramentas de Build do Visual Studio (selecione a carga de trabalho "Desenvolvimento para desktop com C++").
-    * **Linux (Debian/Ubuntu)**: Instale o essencial de build com: sudo apt-get install build-essential.
+* **A C++ compiler**: This package contains C++ code that needs to be compiled during installation.
+    * **Windows**: Install Visual Studio Build Tools (select the "Desktop development with C++" workload).
+    * **Linux (Debian/Ubuntu)**: Install build-essential with: sudo apt-get install build-essential.
+
+## Installation
+
+### PyPI
+
+> To be implemented!
 
 ---
 
-### Instalação
+### GitHub
 
-#### 1. Clone o repositório:
+#### 1. Clone the repository:
 
 ```bash
 git clone https://github.com/jgmotta98/PyTerp.git
 cd PyTerp
 ```
 
-#### 2. Crie e ative um ambiente virtual:
+#### 2. Create and activate a virtual environment:
 
 ```bash
-# Crie o ambiente
+# Create the environment
 python -m venv .venv
 
-# Ative o ambiente
-# No Windows (cmd.exe):
+# Activate the environment
+# On Windows (cmd.exe):
 .venv\Scripts\activate
-# No macOS/Linux (bash/zsh):
+# On macOS/Linux (bash/zsh):
 source .venv/bin/activate
 ```
 
-#### 3. Instale os requerimentos:
+#### 3. Install the requirements:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-#### 4. Instale o pacote:
+#### 4. Install the package:
 
 ```bash
 pip install .
 ```
 
----
-
-### Exemplo de Uso
+## Usage Example
 
 ```py
 import numpy as np
 import pyterp as pt
 
-# Supondo que 'source_points', 'source_values' e 'target_points' 
-# são arrays NumPy devidamente preparados.
+# Assuming 'source_points', 'source_values', and 'target_points'
+# are properly prepared NumPy arrays.
 interpolated_values = pt.interpolate(
     source_points=source_points,
     source_values=source_values,
@@ -76,13 +78,13 @@ interpolated_values = pt.interpolate(
     power=2
 )
 
-print("Valores interpolados:", interpolated_values)
+print("Interpolated values:", interpolated_values)
 ```
 
-Para um exemplo completo e executável, incluindo a criação e preparação dos dados de entrada, consulte o script na pasta [examples](examples/basic_usage.py).
+For a complete and runnable example, including the creation and preparation of input data, please see the script in the [examples](examples/basic_usage.py) folder.
 
-## Créditos
+## Acknowledgements
 
-Este projeto utiliza `nanoflann`, uma biblioteca C++ de alta performance para o algoritmo _k-Nearest Neighbors_. A eficiência da implementação da árvore k-d do nanoflann é fundamental para o desempenho deste interpolador.
+This project uses `nanoflann`, a high-performance C++ library for the _k-Nearest Neighbors_ algorithm. The efficiency of nanoflann's k-d tree implementation is fundamental to this interpolator's performance.
 
-* **Repositório Oficial:** [Nanoflann](https://github.com/jlblancoc/nanoflann)
+* **Official Repository:** [Nanoflann](https://github.com/jlblancoc/nanoflann)
