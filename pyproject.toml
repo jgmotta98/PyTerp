@@ -10,20 +10,42 @@ build-backend = "setuptools.build_meta"
 name = "PyTerp"
 version = "0.1.0"
 authors = [
-  { name="Jonathan Motta", email="jonathan.motta@safesolutions.com.br" },
+  { name="Jonathan Motta", email="jonathangmotta98@gmail.com" },
 ]
-description = "A package for performing optimized KNN IDW interpolation using C++."
+description = "A package for performing optimized k-NN IDW interpolation using C++."
 readme = "README.md"
 requires-python = ">=3.10"
+keywords = [
+    "interpolation",
+    "k-NN",
+    "IDW",
+    "C++",
+    "parallel",
+    "numpy",
+    "performance"
+]
 classifiers = [
+    "Development Status :: 3 - Alpha",
+
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+
     "Operating System :: OS Independent",
-    "Topic :: Scientific/Engineering",
+    
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: C++",
 ]
 dependencies = [
     "numpy",
-    "pandas",
 ]
 
 [project.urls]
-Homepage = "https://github.com/your_username/your_repository"
-Issues = "https://github.com/your_username/your_repository/issues"
+Homepage = "https://github.com/jgmotta98/PyTerp"
+"Bug Tracker" = "https://github.com/jgmotta98/PyTerp/issues"
+"Source Code" = "https://github.com/jgmotta98/PyTerp"
