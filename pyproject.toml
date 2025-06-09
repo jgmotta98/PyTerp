@@ -1,0 +1,29 @@
+[build-system]
+requires = [
+    "setuptools>=61.0",
+    "wheel",
+    "pybind11>=2.10"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PyTerp"
+version = "0.1.0"
+authors = [
+  { name="Jonathan Motta", email="jonathan.motta@safesolutions.com.br" },
+]
+description = "A package for performing optimized KNN IDW interpolation using C++."
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering",
+]
+dependencies = [
+    "numpy",
+    "pandas",
+]
+
+[project.urls]
+Homepage = "https://github.com/your_username/your_repository"
+Issues = "https://github.com/your_username/your_repository/issues"
