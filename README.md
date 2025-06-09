@@ -24,7 +24,11 @@ Before you begin, ensure you have the following software installed:
 
 ### PyPI
 
-> To be implemented!
+#### Install the package:
+
+```bash
+pip install pyterp
+```
 
 ---
 
