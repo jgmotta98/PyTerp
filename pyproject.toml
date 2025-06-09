@@ -7,7 +7,7 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "PyTerp"
+name = "pyterp"
 version = "0.1.0"
 authors = [
   { name="Jonathan Motta", email="jonathangmotta98@gmail.com" },
