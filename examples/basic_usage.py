@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import derfel_interpolation
+import pyterp as pt
 import time
 
 
@@ -40,7 +40,7 @@ def main() -> None:
     intp_grid = interpolated_coordinates(df)
 
     start = time.perf_counter()
-    interpolated_values = derfel_interpolation.interpolate(
+    interpolated_values = pt.interpolate(
         source_points=source_points,
         source_values=source_values,
         target_points=intp_grid,

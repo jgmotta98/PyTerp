@@ -91,7 +91,7 @@ py::array_t<double> cpp_interpolate(
     return interpolated_vals;
 }
 
-PYBIND11_MODULE(PyTerp, m) {
+PYBIND11_MODULE(pyterp, m) {
     m.doc() = "A high-performance parallel interpolator using C++, OpenMP, and pybind11";
     m.def("interpolate", &cpp_interpolate, "Interpolates scattered 3D data onto target points using parallel k-NN IDW",
           py::arg("source_points"),
