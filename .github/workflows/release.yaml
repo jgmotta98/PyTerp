@@ -91,9 +91,9 @@ jobs:
               set -euxo pipefail
 
               if command -v yum; then
-                yum install -y libgomp-devel
+                yum install -y libgomp
               elif command -v dnf; then
-                dnf install -y libgomp-devel
+                dnf install -y libgomp
               elif command -v apt-get; then
                 apt-get update
                 apt-get install -y --no-install-recommends libgomp1
