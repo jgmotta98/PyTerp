@@ -63,41 +63,34 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Build wheels with INTENSE DEBUGGING
+      - name: Build wheels
         uses: pypa/cibuildwheel@v2.19.2
         env:
-          SETUPTOOLS_SCM_PRETEND_VERSION: ${{ needs.details.outputs.tag_name }}
-          
+          VERSION: ${{ needs.details.outputs.tag_name }}
+
           CIBW_BEFORE_BUILD: >
             bash -c "
               set -euxo pipefail
-              
-              echo '--- PASSO 1: VERIFICANDO O AMBIENTE DENTRO DO CONTAINER ---'
-              echo 'A tag recebida do workflow é: ${{ needs.details.outputs.tag_name }}'
-              echo 'A variável de ambiente SETUPTOOLS_SCM_PRETEND_VERSION está definida como:'
-              printenv | grep SETUPTOOLS_SCM_PRETEND_VERSION
-
-              echo '--- PASSO 2: FORÇANDO A VERSÃO NO pyproject.toml ---'
-              # Usamos `sed` para substituir a configuração dinâmica por uma versão fixa
-              # O caminho /project é onde o cibuildwheel monta seu código
-              sed -i 's/dynamic\s*=\s*\["version"\]/version = \"${{ needs.details.outputs.tag_name }}\"/' /project/pyproject.toml
-              
-              # Também removemos o setuptools-scm das dependências de build para ter certeza
-              sed -i '/"setuptools-scm"/d' /project/pyproject.toml
-
-              echo '--- Conteúdo do pyproject.toml MODIFICADO: ---'
+              echo '--- Forçando a versão para ${VERSION} ---'
+              # O .bak é para compatibilidade entre shells
+              sed -i.bak 's/dynamic\s*=\s*\["version"\]/version = \"'${VERSION}'\"/' /project/pyproject.toml
+              sed -i.bak '/"setuptools-scm"/d' /project/pyproject.toml
+              echo '--- pyproject.toml modificado: ---'
               cat /project/pyproject.toml
-              echo '---------------------------------------------'
             "
-          
+
           CIBW_BEFORE_BUILD_LINUX: >
+            {self} &&
             bash -c "
-              set -euxo pipefail;
+              set -euxo pipefail
+              echo '--- Instalando dependências do Linux ---'
               if command -v yum; then yum install -y libgomp;
               elif command -v dnf; then dnf install -y libgomp;
               elif command -v apt-get; then apt-get update && apt-get install -y --no-install-recommends libgomp1;
               fi
             "
+          
+          # Suas outras configurações
           CIBW_SKIP: "*-musllinux* pp* *_i686"
 
       - name: Upload artifacts
