@@ -1,1 +1,6 @@
+include README.md
+
+include pyproject.toml
+include setup.py
+
 graft src
