@@ -1,5 +1,4 @@
 [build-system]
-# Esta seção permanece a mesma. Já está correta.
 requires = [
     "setuptools>=61.0",
     "wheel",
@@ -9,9 +8,8 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [project]
-# Esta seção permanece a mesma.
 name = "pyterp"
-dynamic = ["version"] # Essencial para que o setuptools-scm funcione
+dynamic = ["version"]
 authors = [
   { name="Jonathan Motta", email="jonathangmotta98@gmail.com" },
 ]
@@ -39,30 +37,8 @@ dependencies = [
 ]
 
 [project.urls]
-# Esta seção permanece a mesma.
 Homepage = "https://github.com/jgmotta98/PyTerp"
 "Bug Tracker" = "https://github.com/jgmotta98/PyTerp/issues"
 "Source Code" = "https://github.com/jgmotta98/PyTerp"
 
 [tool.setuptools-scm]
-
-[tool.setuptools]
-zip-safe = false
-
-[tool.setuptools.packages.find]
-where = ["src"]
-
-[tool.setuptools.bdist_wheel]
-universal = false
-
-[[tool.setuptools.ext_modules]]
-name = "pyterp"
-sources = ["src/interpolator.cpp"]
-language = "c++"
-extra_compile_args = {cflags = ["-O3", "-fopenmp"], cflags_win = ["/O2", "/openmp"]}
-
-py_limited_api = false
-include_dirs = [
-    "src",
-    { "type" = "pybind11", "sub-dir" = "include" }
-]
