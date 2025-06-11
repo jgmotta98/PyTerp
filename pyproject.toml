@@ -2,13 +2,14 @@
 requires = [
     "setuptools>=61.0",
     "wheel",
-    "pybind11>=2.10"
+    "pybind11>=2.10",
+    "setuptools-scm"
 ]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyterp"
-version = "0.1.0"
+dynamic = ["version"]
 authors = [
   { name="Jonathan Motta", email="jonathangmotta98@gmail.com" },
 ]
@@ -43,9 +44,12 @@ classifiers = [
 ]
 dependencies = [
     "numpy",
+    "pandas",
 ]
 
 [project.urls]
 Homepage = "https://github.com/jgmotta98/PyTerp"
 "Bug Tracker" = "https://github.com/jgmotta98/PyTerp/issues"
 "Source Code" = "https://github.com/jgmotta98/PyTerp"
+
+[tool.setuptools-scm]
