@@ -85,10 +85,25 @@ jobs:
         uses: pypa/cibuildwheel@v2.19.2
         env:
           SETUPTOOLS_SCM_PRETEND_VERSION: ${{ needs.details.outputs.tag_name }}
+
+          CIBW_BEFORE_BUILD_LINUX: >
+            bash -c "
+              set -euxo pipefail
+
+              if command -v yum; then
+                yum install -y libgomp-devel
+              elif command -v dnf; then
+                dnf install -y libgomp-devel
+              elif command -v apt-get; then
+                apt-get update
+                apt-get install -y --no-install-recommends libgomp1
+              else
+                echo 'ERROR: Could not find a known package manager (yum, dnf, apt-get).' >&2
+                exit 1
+              fi
+            "
           
-          CIBW_BEFORE_BUILD_LINUX: "yum install -y libgomp-devel || apt-get update && apt-get install -y libgomp1"
           CIBW_SKIP: "*-musllinux* pp* *_i686"
-          CIBW_BUILD_VERBOSITY: "3"
 
   pypi_publish:
     name: Upload release to PyPI
