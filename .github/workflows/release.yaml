@@ -81,34 +81,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Build wheels with cibuildwheel for debugging
+      - name: Build wheels with cibuildwheel
         uses: pypa/cibuildwheel@v2.19.2
         env:
           SETUPTOOLS_SCM_PRETEND_VERSION: ${{ needs.details.outputs.tag_name }}
           
-          CIBW_BEFORE_BUILD: >
-            bash -c "
-              echo '--- INICIANDO SCRIPT DE DEBUG CIBW_BEFORE_BUILD ---'
-              
-              echo '--- 1. VERIFICANDO VARIÁVEIS DE AMBIENTE RELEVANTES ---'
-              printenv | sort | grep -E 'SCM|CIBW|PIP' || echo 'Nenhuma variável relevante encontrada'
-              
-              echo '--- 2. LISTANDO ARQUIVOS NO PROJETO (DENTRO DO CONTAINER) ---'
-              # O código do projeto é montado em /project
-              ls -laR /project
-              
-              echo '--- 3. TENTANDO EXECUTAR setuptools_scm MANUALMENTE ---'
-              # O ambiente de build ainda está limpo, então instalamos as dependências de build
-              pip install setuptools-scm
-              # Agora, pedimos ao setuptools_scm para nos dizer qual versão ele calcula
-              python -m setuptools_scm
-              
-              echo '--- FIM DO SCRIPT DE DEBUG ---'
-            "
-          
-          # Configurações de compilação
           CIBW_BEFORE_BUILD_LINUX: "yum install -y libgomp-devel || apt-get update && apt-get install -y libgomp1"
           CIBW_SKIP: "*-musllinux* pp* *_i686"
+          CIBW_BUILD_VERBOSITY: "3"
 
   pypi_publish:
     name: Upload release to PyPI
