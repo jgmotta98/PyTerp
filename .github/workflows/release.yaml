@@ -81,29 +81,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Debug Git State
-        run: |
-          echo "--- Current Directory ---"
-          pwd
-          echo "--- List Files (including hidden) ---"
-          ls -la
-          echo "--- Git Status ---"
-          git status
-          echo "--- Git Tags ---"
-          git tag
-          echo "--- Git Describe (most important) ---"
-          git describe --tags --dirty --always
-          echo "--- Git Log (last 3 commits) ---"
-          git log -n 3 --oneline
-
       - name: Build wheels with cibuildwheel
         uses: pypa/cibuildwheel@v2.19.2
         env:
-          SETUPTOOLS_SCM_DEBUG: "1"
-          
+          SETUPTOOLS_SCM_PRETEND_VERSION: ${{ needs.details.outputs.tag_name }}
+
           CIBW_BEFORE_BUILD_LINUX: "yum install -y libgomp-devel || apt-get update && apt-get install -y libgomp1"
           CIBW_SKIP: "*-musllinux* pp* *_i686"
-          CIBW_BUILD_VERBOSITY: "3"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
