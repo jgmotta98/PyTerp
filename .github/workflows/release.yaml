@@ -152,4 +152,3 @@ jobs:
           gh release create "${{ github.ref_name }}" dist/* \
             --title "${{ env.PACKAGE_NAME }} ${{ env.VERSION }}" \
             --generate-notes
-              --generate-notes
