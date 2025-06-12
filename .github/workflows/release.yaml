@@ -12,14 +12,36 @@ env:
   PACKAGE_NAME: "pyterp"
 
 jobs:
-  details:
+  get_version:
     runs-on: ubuntu-latest
     outputs:
-      tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.verify_versions.outputs.version }}
     steps:
-      - name: Extract tag name from Git ref
-        id: release
-        run: echo "tag_name=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Verificar se tag e _version.py coincidem
+        id: verify_versions
+        run: |
+          TAG_VERSION=${{ github.ref_name#v }}
+
+          FILE_VERSION=$(python -c "from src._version import __version__; print(__version__)")
+
+          echo "Versão da Tag: ${TAG_VERSION}"
+          echo "Versão do Arquivo: ${FILE_VERSION}"
+
+          if [ "${TAG_VERSION}" != "${FILE_VERSION}" ]; then
+            echo "::error::Erro: A versão da tag Git ('${TAG_VERSION}') não é a mesma da versão no _version.py ('${FILE_VERSION}')!"
+            exit 1
+          fi
+
+          echo "As versões coincidem. Prosseguindo com a versão ${TAG_VERSION}"
+          echo "version=${TAG_VERSION}" >> "$GITHUB_OUTPUT"
 
   check_pypi:
     needs: details
@@ -40,7 +62,6 @@ jobs:
           NEW_TAG="${{ needs.details.outputs.tag_name }}"
           LATEST_PYPI_VERSION="${{ steps.pypi.outputs.latest_pypi_version }}"
           
-          # Compara as versões (sort -V lida com semver)
           if [ "$(printf '%s\n' "$LATEST_PYPI_VERSION" "$NEW_TAG" | sort -rV | head -n 1)" != "$NEW_TAG" ] || [ "$NEW_TAG" == "$LATEST_PYPI_VERSION" ]; then
             echo "::error::New tag '${NEW_TAG}' is not greater than the latest PyPI version '${LATEST_PYPI_VERSION}'."
             exit 1
@@ -50,7 +71,7 @@ jobs:
 
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
-    needs: [details, check_pypi]
+    needs: [get_version, check_pypi]
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -58,29 +79,13 @@ jobs:
         os: [ubuntu-latest, windows-latest]
 
     steps:
-      - name: Checkout repository
+      - name: Checkout do código
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Build wheels
+      
+      - name: Build wheels com cibuildwheel
         uses: pypa/cibuildwheel@v2.19.2
         env:
-          VERSION: ${{ needs.details.outputs.tag_name }}
-
-          CIBW_BEFORE_BUILD: >
-            bash -c "
-              set -euxo pipefail
-              echo '--- Forçando a versão para ${VERSION} ---'
-              # O .bak é para compatibilidade entre shells
-              sed -i.bak 's/dynamic\s*=\s*\["version"\]/version = \"'${VERSION}'\"/' /project/pyproject.toml
-              sed -i.bak '/"setuptools-scm"/d' /project/pyproject.toml
-              echo '--- pyproject.toml modificado: ---'
-              cat /project/pyproject.toml
-            "
-
           CIBW_BEFORE_BUILD_LINUX: >
-            {self} &&
             bash -c "
               set -euxo pipefail
               echo '--- Instalando dependências do Linux ---'
@@ -90,7 +95,6 @@ jobs:
               fi
             "
           
-          # Suas outras configurações
           CIBW_SKIP: "*-musllinux* pp* *_i686"
 
       - name: Upload artifacts
@@ -120,15 +124,11 @@ jobs:
 
   github_release:
     name: Create GitHub Release
-    needs: [pypi_publish, details]
+    needs: [pypi_publish, get_version]
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - name: Download all wheels
         uses: actions/download-artifact@v4
         with:
@@ -138,7 +138,8 @@ jobs:
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.get_version.outputs.version }}
         run: |
-          gh release create "${{ needs.details.outputs.tag_name }}" dist/* \
-            --title "${{ env.PACKAGE_NAME }} ${{ needs.details.outputs.tag_name }}" \
+          gh release create "${{ github.ref_name }}" dist/* \
+            --title "${{ env.PACKAGE_NAME }} ${{ env.VERSION }}" \
             --generate-notes
