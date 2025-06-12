@@ -32,7 +32,7 @@ jobs:
 
           VERSION_FROM_TAG="${TAG_NAME#v}"
           
-          VERSION_FROM_FILE=$(python -c "from _version import __version__; print(__version__)")
+          VERSION_FROM_FILE=$(python -c "from src._version import __version__; print(__version__)")
 
           echo "Versão da Tag: ${VERSION_FROM_TAG}"
           echo "Versão do Arquivo: ${VERSION_FROM_FILE}"
