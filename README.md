@@ -68,24 +68,7 @@ pip install .
 
 ## Usage Example
 
-```py
-import numpy as np
-import pyterp as pt
-
-# Assuming 'source_points', 'source_values', and 'target_points'
-# are properly prepared NumPy arrays.
-interpolated_values = pt.interpolate(
-    source_points=source_points,
-    source_values=source_values,
-    target_points=target_points,
-    k_neighbors=10,
-    power=2
-)
-
-print("Interpolated values:", interpolated_values)
-```
-
-For a complete and runnable example, including the creation and preparation of input data, please see the script in the [examples](examples/basic_usage.py) folder.
+For a complete and runnable example, including the creation and preparation of input data, please see the scripts in the [examples](examples/basic_usage.py) folder.
 
 ## Acknowledgements
 
