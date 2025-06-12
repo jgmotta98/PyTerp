@@ -121,6 +121,7 @@ jobs:
           path: dist
           pattern: dist-*
           merge-multiple: true
+          
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
 
@@ -131,12 +132,18 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Download all wheels
         uses: actions/download-artifact@v4
         with:
           path: dist
           pattern: dist-*
           merge-multiple: true
+
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -145,3 +152,4 @@ jobs:
           gh release create "${{ github.ref_name }}" dist/* \
             --title "${{ env.PACKAGE_NAME }} ${{ env.VERSION }}" \
             --generate-notes
+              --generate-notes
