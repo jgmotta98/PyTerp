@@ -46,7 +46,7 @@ jobs:
           echo "version=${VERSION_FROM_TAG}" >> "$GITHUB_OUTPUT"
 
   check_pypi:
-    needs: details
+    needs: get_version
     runs-on: ubuntu-latest
     steps:
       - name: Fetch latest version from PyPI
