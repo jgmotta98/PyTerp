@@ -61,7 +61,7 @@ jobs:
 
       - name: Compare new tag with PyPI version
         run: |
-          NEW_TAG="${{ needs.get_version.outputs.tag_name }}"
+          NEW_TAG="${{ needs.get_version.outputs.version }}"
           LATEST_PYPI_VERSION="${{ steps.pypi.outputs.latest_pypi_version }}"
           
           if [ "$(printf '%s\n' "$LATEST_PYPI_VERSION" "$NEW_TAG" | sort -rV | head -n 1)" != "$NEW_TAG" ] || [ "$NEW_TAG" == "$LATEST_PYPI_VERSION" ]; then
