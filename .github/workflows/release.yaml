@@ -28,20 +28,22 @@ jobs:
       - name: Verificar se tag e _version.py coincidem
         id: verify_versions
         run: |
-          TAG_VERSION=${{ github.ref_name#v }}
+          TAG_NAME="${{ github.ref_name }}"
 
-          FILE_VERSION=$(python -c "from src._version import __version__; print(__version__)")
+          VERSION_FROM_TAG="${TAG_NAME#v}"
+          
+          VERSION_FROM_FILE=$(python -c "from _version import __version__; print(__version__)")
 
-          echo "Versão da Tag: ${TAG_VERSION}"
-          echo "Versão do Arquivo: ${FILE_VERSION}"
+          echo "Versão da Tag: ${VERSION_FROM_TAG}"
+          echo "Versão do Arquivo: ${VERSION_FROM_FILE}"
 
-          if [ "${TAG_VERSION}" != "${FILE_VERSION}" ]; then
-            echo "::error::Erro: A versão da tag Git ('${TAG_VERSION}') não é a mesma da versão no _version.py ('${FILE_VERSION}')!"
+          if [ "${VERSION_FROM_TAG}" != "${VERSION_FROM_FILE}" ]; then
+            echo "::error::Erro: A versão da tag Git ('${VERSION_FROM_TAG}') não é a mesma da versão no _version.py ('${VERSION_FROM_FILE}')!"
             exit 1
           fi
 
-          echo "As versões coincidem. Prosseguindo com a versão ${TAG_VERSION}"
-          echo "version=${TAG_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "As versões coincidem. Prosseguindo com a versão ${VERSION_FROM_TAG}"
+          echo "version=${VERSION_FROM_TAG}" >> "$GITHUB_OUTPUT"
 
   check_pypi:
     needs: details
