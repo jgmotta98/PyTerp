@@ -9,7 +9,7 @@ def create_fake_dataframes(num_rows: int = 10) -> None:
         'X': np.random.rand(num_rows) * 10,
         'Y': np.random.rand(num_rows) * 10,
         'Z': np.random.rand(num_rows) * 5,
-        'RANDOM_VARIABLE': np.random.rand(num_rows) * 10 + 5
+        'RANDOM_VARIABLE': np.random.randint(0, 2, size=num_rows).astype(float)
     }
 
     df = pd.DataFrame(data)
@@ -40,7 +40,7 @@ def main() -> None:
     intp_grid = interpolated_coordinates(df)
 
     start = time.perf_counter()
-    interpolated_values = pt.interpolate(
+    interpolated_values = pt.classify(
         source_points=source_points,
         source_values=source_values,
         target_points=intp_grid,
