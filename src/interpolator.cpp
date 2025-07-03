@@ -5,6 +5,8 @@
 
 #include "nanoflann.hpp"
 
+#include "extractionVariables.cpp"
+
 namespace py = pybind11;
 
 struct NumpyAdaptor {
@@ -183,4 +185,11 @@ PYBIND11_MODULE(pyterp, m) {
           py::arg("target_points"),
           py::arg("k_neighbors") = 8,
           py::arg("power") = 2.0);
+
+    m.def("variables_extraction", &variablesExtraction, "Extract the values of the variables in the read archive",
+          py::arg("variaveis"),
+          py::arg("texto"),
+          py::arg("quant_x"),
+          py::arg("quant_y"),
+          py::arg("quant_z"));
 }
