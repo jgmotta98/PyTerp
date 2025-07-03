@@ -7,6 +7,8 @@
 
 #include "extractionVariables.cpp"
 
+#include "extractionVariablesResult.cpp"
+
 namespace py = pybind11;
 
 struct NumpyAdaptor {
@@ -192,4 +194,9 @@ PYBIND11_MODULE(pyterp, m) {
           py::arg("quant_x"),
           py::arg("quant_y"),
           py::arg("quant_z"));
+
+    m.def("variables_extraction", &variablesExtractionResult, "Extract the values of the variables in the read archive",
+          py::arg("variaveis"),
+          py::arg("texto"),
+          py::arg("mapping_dict"));
 }
