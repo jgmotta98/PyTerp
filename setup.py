@@ -2,11 +2,15 @@ from setuptools import setup, Extension
 import pybind11
 import sys
 
-cpp_args = []
+cpp_args = ["-std=c++20"]
+link_args = []
+
 if sys.platform == 'win32':
     cpp_args.extend(['/O2', '/openmp'])
+    link_args.extend(['/openmp'])
 else:
     cpp_args.extend(['-O3', '-fopenmp'])
+    link_args.extend(['-fopenmp'])
 
 ext_modules = [
     Extension(
@@ -18,6 +22,7 @@ ext_modules = [
         ],
         language='c++',
         extra_compile_args=cpp_args,
+        extra_link_args=link_args,
     ),
 ]
 
