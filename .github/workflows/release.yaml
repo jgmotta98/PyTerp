@@ -98,8 +98,8 @@ jobs:
             "
 
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
-          
-          CIBW_ENVIRONMENT: CXXFLAGS="/std:c++17"
+
+          CIBW_ENVIRONMENT_WINDOWS: CXXFLAGS="/std:c++17"
           
           CIBW_SKIP: "*-musllinux* pp* *_i686"
 
