@@ -5,7 +5,7 @@
 
 #include "nanoflann.hpp"
 
-#include "extractionVariables.cpp"
+#include "variablesExtraction.cpp"
 
 namespace py = pybind11;
 
