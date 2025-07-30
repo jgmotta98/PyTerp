@@ -206,6 +206,8 @@ PYBIND11_MODULE(pyterp, m)
     m.def("variables_extraction", &variablesExtraction, "Extract the values of the variables in the read archive",
           py::arg("variaveis"),
           py::arg("texto"),
+          py::arg("idx_variaveis"),
+          py::arg("total_variaveis_ativas"),
           py::arg("quant_x"),
           py::arg("quant_y"),
           py::arg("quant_z"));
