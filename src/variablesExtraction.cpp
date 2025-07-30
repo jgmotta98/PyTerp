@@ -20,8 +20,8 @@ void extrairValoresVariaveis(
     std::string_view &texto,
     const std::vector<std::string> &variaveis_pedidas,
     const std::unordered_set<std::string_view> &set_variaveis_pedidas,
-    std::unordered_map<std::string, unsigned int> &indices_variaveis_desejadas, std::unordered_map<std::string, std::vector<double>> &dict_resultado,
-    unsigned int &total_variaveis_ativas,
+    const std::unordered_map<std::string, unsigned int> &idx_variaveis, std::unordered_map<std::string, std::vector<double>> &dict_resultado,
+    const unsigned int &total_variaveis_ativas,
     const unsigned int quant_x,
     const unsigned int quant_y,
     const unsigned int quant_z)
@@ -35,7 +35,7 @@ void extrairValoresVariaveis(
     // Listas de verificação para acesso rápido
     std::vector<bool> indice_e_desejado(total_variaveis_ativas, false);
     std::vector<std::string> indice_para_nome(total_variaveis_ativas);
-    for (const auto &[nome, idx] : indices_variaveis_desejadas)
+    for (const auto &[nome, idx] : idx_variaveis)
     {
         if (idx < total_variaveis_ativas)
         {
@@ -170,20 +170,8 @@ void extrairValoresVariaveis(
     }
 }
 
-std::string_view variablesSetup(const std::string &texto, const std::unordered_set<std::string_view> &set_variaveis_pedidas,
-                                std::unordered_map<std::string, unsigned int> &indices_variaveis_desejadas, unsigned int &total_variaveis_ativas,
-                                std::unordered_map<std::string, std::vector<double>> &dict_resultado)
+std::string_view textoDadosSetup(const std::string &texto)
 {
-    std::vector<std::string> ordem_variaveis = {
-        "P1", "P2", "U1", "nul", "V1", "nul", "W1", "nul", "R1", "R2", "nul", "KE", "EP", "nul", "nul", "C1", "nul", "nul", "nul",
-        "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul",
-        "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul",
-        "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul",
-        "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul",
-        "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul",
-        "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul",
-        "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "nul", "PRPS", "LII", "EPKE", "DEN1", "EL1", "ENUT"};
-
     std::string linha_tf_completa; // Linha Completa dos True or False
     size_t pos_inicio_dados = 0;   // Posição referente ao começo dos dados no arquiov
 
@@ -227,39 +215,20 @@ std::string_view variablesSetup(const std::string &texto, const std::unordered_s
     if (pos_inicio_dados == 0)
         throw std::runtime_error("Bloco de dados não encontrado.");
 
-    // Loop para fazer 'conversão' de índices das variáveis desejadas
-    for (unsigned int i = 0; i < linha_tf_completa.size() && i < ordem_variaveis.size(); ++i)
-    {
-        // Se a variável for marcada com T, está presente no arquivo
-        if (linha_tf_completa[i] == 'T')
-        {
-            const std::string &var = ordem_variaveis[i];
-            // Se a variável está entre as desejadas, adiciona nos dicionários
-            if (set_variaveis_pedidas.count(var))
-            {
-                indices_variaveis_desejadas[var] = total_variaveis_ativas;
-                dict_resultado[var] = {};
-            }
-            total_variaveis_ativas++;
-        }
-    }
-
     return std::string_view(texto).substr(pos_inicio_dados);
 }
 
 std::unordered_map<std::string, std::vector<double>> variablesExtraction(const std::vector<std::string> &variaveis,
-                                                                         const std::string &texto, const unsigned int quant_x, const unsigned int quant_y, const unsigned int quant_z)
+                                                                         const std::string &texto, const std::unordered_map<std::string, unsigned int> &idx_variaveis, const unsigned int &total_variaveis_ativas, int quant_x, const unsigned int quant_y, const unsigned int quant_z)
 {
     const std::unordered_set<std::string_view> set_variaveis_pedidas(variaveis.begin(), variaveis.end()); // Conversão da lista para um set por ser mais rápido a pesquisa O(1)
-    std::unordered_map<std::string, unsigned int> indices_variaveis_desejadas;                            // Dicionário com os índices das variáveis no arquiov
-    unsigned int total_variaveis_ativas = 0;
 
     std::unordered_map<std::string, std::vector<double>> dict_resultado; // Dicionário para os resultados de cada variável
 
-    std::string_view texto_dados = variablesSetup(texto, set_variaveis_pedidas, indices_variaveis_desejadas, total_variaveis_ativas, dict_resultado);
+    std::string_view texto_dados = textoDadosSetup(texto);
 
     // Pega os valores das variáveis
-    extrairValoresVariaveis(texto_dados, variaveis, set_variaveis_pedidas, indices_variaveis_desejadas, dict_resultado, total_variaveis_ativas, quant_x, quant_y, quant_z);
+    extrairValoresVariaveis(texto_dados, variaveis, set_variaveis_pedidas, idx_variaveis, dict_resultado, total_variaveis_ativas, quant_x, quant_y, quant_z);
 
     return dict_resultado;
 }
