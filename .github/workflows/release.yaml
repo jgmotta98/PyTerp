@@ -71,6 +71,20 @@ jobs:
             echo "New tag '${NEW_TAG}' is valid and greater than PyPI version '${LATEST_PYPI_VERSION}'."
           fi
 
+  build_sdist:
+    name: Build sdist
+    needs: [get_version, check_pypi]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build sdist
+        run: pipx run build --sdist
+      - name: Upload sdist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-sdist
+          path: dist/*.tar.gz
+
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
     needs: [get_version, check_pypi]
@@ -87,31 +101,22 @@ jobs:
       - name: Build wheels com cibuildwheel
         uses: pypa/cibuildwheel@v2.19.2
         env:
-          CIBW_BEFORE_BUILD_LINUX: >
-            bash -c "
-              set -euxo pipefail
-              echo '--- Instalando dependências do Linux ---'
-              if command -v yum; then yum install -y libgomp;
-              elif command -v dnf; then dnf install -y libgomp;
-              elif command -v apt-get; then apt-get update && apt-get install -y --no-install-recommends libgomp1;
-              fi
-            "
-
+          CIBW_BUILD: "cp310-*"
+          CIBW_BEFORE_BUILD_LINUX: >            
+            bash -c "apt-get update && apt-get install -y --no-install-recommends libgomp1 || yum install -y libgomp"
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
-
           CIBW_ENVIRONMENT_WINDOWS: CXXFLAGS="/std:c++20 /openmp:experimental"
-          
           CIBW_SKIP: "*-musllinux* pp* *_i686 win32"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: dist-${{ matrix.os }}
-          path: ./wheelhouse
+          path: ./wheelhouse/*.whl
 
   pypi_publish:
     name: Upload release to PyPI
-    needs: build_wheels
+    needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
     environment:
       name: release
