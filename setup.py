@@ -6,7 +6,7 @@ cpp_args = []
 link_args = []
 
 if sys.platform == 'win32':
-    cpp_args.extend(['/std:c++20' '/O2', '/openmp:experimental'])
+    cpp_args.extend(['/std:c++20', '/O2', '/openmp:experimental'])
     link_args.extend(['/openmp'])
 else:
     cpp_args.extend(['-std=c++20', '-O3', '-fopenmp'])
