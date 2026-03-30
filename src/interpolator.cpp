@@ -7,6 +7,8 @@
 
 #include "variablesExtraction.cpp"
 
+#include "calculateAllocationScores.cpp"
+
 namespace py = pybind11;
 
 struct NumpyAdaptor
@@ -211,4 +213,14 @@ PYBIND11_MODULE(pyterp, m)
           py::arg("quant_x"),
           py::arg("quant_y"),
           py::arg("quant_z"));
+
+    m.def("calculate_allocation_scores", &calculate_allocation_scores, "Calculate the scores (simulations detected) in each candidate point",
+          py::arg("idx_candidatos"),
+          py::arg("plumas"),
+          py::arg("quant_plumas"),
+          py::arg("offsets"),
+          py::arg("vizinhos_flat"),
+          py::arg("cobertura_atual"),
+          py::arg("k"),
+          py::arg("usar_raio_detector"));
 }
