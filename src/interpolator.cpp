@@ -4,10 +4,9 @@
 #include <omp.h>
 
 #include "nanoflann.hpp"
-
 #include "variablesExtraction.cpp"
-
 #include "calculateAllocationScores.cpp"
+#include "calculateNeighborLines.cpp"
 
 namespace py = pybind11;
 
@@ -223,4 +222,15 @@ PYBIND11_MODULE(pyterp, m)
           py::arg("cobertura_atual"),
           py::arg("k"),
           py::arg("usar_raio_detector"));
+
+    m.def("calculate_neighbor_lines", &calculate_neighbor_lines, "Calculate the scores (simulations detected) in each possible line originated in a point",
+          py::arg("vizinhos"),
+          py::arg("coords"),
+          py::arg("coords_vizinhos_x"),
+          py::arg("coords_vizinhos_y"),
+          py::arg("coord_central"),
+          py::arg("plumas"),
+          py::arg("plumas_ainda_nao_detectadas"),
+          py::arg("valor_minimo_lii_metro"),
+          py::arg("tolerancia") = 1e-6);
 }
