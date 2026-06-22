@@ -15,7 +15,7 @@ std::tuple<int32_t, int32_t> calculate_neighbor_lines(
     py::array_t<double> coord_central,
     py::array_t<double> plumas,
     py::array_t<bool> plumas_ainda_nao_detectadas,
-    double valor_minimo_lii_metro,
+    py::array_t<double> lii_metro_plumas,
     double tolerancia = 1e-6)
 {
     uint32_t vizinhos_size = vizinhos.shape(0);
@@ -35,6 +35,8 @@ std::tuple<int32_t, int32_t> calculate_neighbor_lines(
     auto plumas_ptr = plumas.unchecked<2>();
 
     auto plumas_ainda_nao_detectadas_ptr = plumas_ainda_nao_detectadas.unchecked<1>();
+
+    auto lii_metro_plumas_ptr = lii_metro_plumas.unchecked<1>();
 
     double cx = coord_central_ptr(0);
     double cy = coord_central_ptr(1);
@@ -136,7 +138,9 @@ std::tuple<int32_t, int32_t> calculate_neighbor_lines(
             for (size_t p = 0; p < plumas_ativas.size(); p++)
             {
                 double lii_metro = (soma_plumas[p] / pontos_na_reta) * tamanho_reta;
-                if (lii_metro >= valor_minimo_lii_metro)
+                double limite_atual = lii_metro_plumas_ptr(plumas_ativas[p]);
+
+                if (lii_metro >= limite_atual)
                 {
                     score_atual++;
                 }

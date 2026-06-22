@@ -231,6 +231,6 @@ PYBIND11_MODULE(pyterp, m)
           py::arg("coord_central"),
           py::arg("plumas"),
           py::arg("plumas_ainda_nao_detectadas"),
-          py::arg("valor_minimo_lii_metro"),
+          py::arg("lii_metro_plumas"),
           py::arg("tolerancia") = 1e-6);
 }
